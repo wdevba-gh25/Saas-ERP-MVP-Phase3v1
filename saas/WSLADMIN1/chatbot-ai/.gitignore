@@ -1,0 +1,8 @@
+node_modules
+dist
+.env
+.prisma
+.npm
+.DS_Store
+coverage
+postgres_data

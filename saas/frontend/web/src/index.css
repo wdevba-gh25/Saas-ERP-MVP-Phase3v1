@@ -1,0 +1,42 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Global base styles */
+@layer base {
+  html, body, #root {
+    @apply min-h-screen bg-slate-900 text-slate-100 antialiased;
+    font-family: 'Inter', 'Segoe UI', system-ui, sans-serif;
+  }
+
+  h1, h2, h3, h4, h5, h6 {
+    @apply text-slate-100 font-semibold;
+  }
+
+  a {
+    @apply text-blue-400 hover:text-blue-300 underline underline-offset-2;
+  }
+}
+
+/* Custom reusable UI components */
+@layer components {
+  .input {
+    @apply w-full rounded-xl border border-slate-700 bg-slate-800 px-3 py-2 text-slate-100 placeholder-slate-500 outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 transition;
+  }
+
+  .btn-primary {
+    @apply inline-flex items-center justify-center rounded-xl bg-blue-600 px-4 py-2 font-medium text-white hover:bg-blue-700 focus:ring-2 focus:ring-blue-500 focus:outline-none transition;
+  }
+
+  .btn-secondary {
+    @apply inline-flex items-center justify-center rounded-xl border border-slate-600 bg-slate-800 px-4 py-2 text-slate-100 hover:bg-slate-700 transition;
+  }
+
+  .link {
+    @apply text-blue-400 hover:text-blue-300 underline underline-offset-2;
+  }
+
+  .card {
+    @apply rounded-2xl border border-slate-700 bg-slate-800 p-6 shadow-xl;
+  }
+}

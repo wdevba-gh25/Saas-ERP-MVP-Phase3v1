@@ -1,0 +1,18 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# VS
+.vs/
+
+# Node
+frontend/web/node_modules/
+frontend/web/dist/
+*.log
+
+# SQLite db
+*.db

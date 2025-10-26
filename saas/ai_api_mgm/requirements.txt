@@ -1,0 +1,8 @@
+fastapi
+uvicorn[standard]
+httpx
+python-dotenv
+pydantic>=2
+reportlab
+pyodbc
+requests
