@@ -69,64 +69,60 @@ This phase delivers a complete AI-augmented ERP experience — combining PDF rep
 2. Verify creation of tenant schemas (`dbo`, `org_1`, `org_2`, …).
 3. Update connection strings in each .NET service:
 
-```json
 "ConnectionStrings": {
   "DefaultConnection": "Server=localhost;Database=SaaSMvpDB;Trusted_Connection=True;TrustServerCertificate=True;"
 }
-Chatbot AI Setup (WSL / Linux)
-Important: Windows ↔ WSL networking requires IP bridging.
-Replace all http://localhost: references in the Windows frontend/backend with http://<WSL_IP>: (e.g. 172.25.16.1).
-Obtain your WSL IP by running:
 
-bash
-Copiar código
-ip addr show eth0 | grep inet
-1 Clone & Open Project
+## Chatbot AI Setup (WSL / Linux)
+- Important: Windows ↔ WSL networking requires IP bridging.
+- Replace all http://localhost: references in the Windows frontend/backend with http://<WSL_IP>: (e.g. 172.25.16.1).
+- Obtain your WSL IP by running:
+  
+  ip addr show eth0 | grep inet
+
+## 1 Clone & Open Project:
+
 Inside WSL:
 
-bash
-Copiar código
-cd ~
-git clone https://github.com/youruser/chatbot-ai.git
-cd chatbot-ai
-2 Install Dependencies
-bash
-Copiar código
-npm install
-3 Configure Environment
-Create a .env file:
+  cd ~
+  git clone https://github.com/youruser/chatbot-ai.git
+  cd chatbot-ai
+  
+## 2 Install Dependencies:
 
-ini
-Copiar código
+  npm install
+  
+## 3 Configure Environment:
+
+  Create a .env file:
+
 DATABASE_URL="postgresql://admin1:password@localhost:5432/chatbot_ai"
 REDIS_URL="redis://localhost:6379"
 ERP_GATEWAY_BASE_URL="http://172.xx.xx.xx:5100"
 AI_SERVER_URL="http://172.xx.xx.xx:6000"
 PORT=7000
-4 Prisma Initialization
-bash
-Copiar código
+
+## 4 Prisma Initialization:
+
 npx prisma migrate dev
 npx prisma generate
-5 Start Redis and PostgreSQL
-bash
-Copiar código
+
+## 5 Start Redis and PostgreSQL:
+
 sudo service redis-server start
 sudo service postgresql start
-6 Launch the Chatbot Service
-bash
-Copiar código
+
+## 6 Launch the Chatbot Service:
+
 npm run start:dev
+
 The Chatbot API should now respond at:
 
-arduino
-Copiar código
-http://172.xx.xx.xx:7000/api/chat
-Backend (.NET) Setup
-From Windows or WSL (depending on your preference):
+  http://172.xx.xx.xx:7000/api/chat
+  
+## Backend (.NET) Setup
+  From Windows or WSL (depending on your preference):
 
-bash
-Copiar código
 cd backend/AuthService
 dotnet run
 
@@ -135,12 +131,12 @@ dotnet run
 
 cd ../ERP-Gateway
 dotnet run
+
 ERP-Gateway communicates with both SQL Server and the Chatbot service.
 Verify ports in each launchSettings.json file.
 
-Frontend Setup
-bash
-Copiar código
+## Frontend Setup
+
 cd frontend/web
 npm install
 npm run dev
@@ -148,79 +144,66 @@ Default URL: http://localhost:5173
 
 Frontend .env.local:
 
-ini
-Copiar código
 VITE_API_BASE=http://localhost:5100
 VITE_AI_SERVER_URL=http://172.xx.xx.xx:6000
 VITE_CHATBOT_SERVER_URL=http://172.xx.xx.xx:7000
-AI Features Overview
-AI Reports
-Sequential prompt pipeline → contextual business summaries
 
-PDF generation with cancellable Saga orchestration
+## AI Features Overview
 
-CPU-only inference via local Mistral 7B (served by ERP Gateway)
+- AI Reports
+- Sequential prompt pipeline → contextual business summaries
+- PDF generation with cancellable Saga orchestration
+- CPU-only inference via local Mistral 7B (served by ERP Gateway)
+- Decision Gateway: Analyzes intent → routes to correct AI endpoint (summarize, recommend, extract)
 
-Decision Gateway
-Analyzes intent → routes to correct AI endpoint (summarize, recommend, extract)
-
-AI Chatbot
+## AI Chatbot
 End-to-end async chain:
 
-pgsql
-Copiar código
-Chatbot UI → Chatbot Service → ERP Gateway → SQL Server → Mistral 7B → ERP Gateway → UI
-Context retrieved through stored procedures
+- Chatbot UI → Chatbot Service → ERP Gateway → SQL Server → Mistral 7B → ERP Gateway → UI
+- Context retrieved through stored procedures
+- Responses normalized into JSON for structured rendering
+- Supports cancellation and state recovery via Redis Saga
 
-Responses normalized into JSON for structured rendering
+## Authentication & Authorization
 
-Supports cancellation and state recovery via Redis Saga
+- JWT tokens include organizationId, role, and tenantSchema
 
-Authentication & Authorization
-JWT tokens include organizationId, role, and tenantSchema
+- [Authorize(Roles = "Owner, Admin, Analyst")] attributes control access
 
-[Authorize(Roles = "Owner, Admin, Analyst")] attributes control access
+- TenantContext middleware ensures schema isolation per request
 
-TenantContext middleware ensures schema isolation per request
+## Testing & Development
 
-Testing & Development
-Swagger UI for each service (https://localhost:<port>/swagger)
+- Swagger UI for each service (https://localhost:<port>/swagger)
+- Console logs verify AI report ↔ Chatbot ↔ Gateway round-trip
+- Test tenants included in seed data
 
-Console logs verify AI report ↔ Chatbot ↔ Gateway round-trip
-
-Test tenants included in seed data
-
-Disable fake inference delay (for faster demos):
+## Disable fake inference delay (for faster demos):
 
 Search: HOW TO DISABLE LONG INFERENCE RUN CANCELLATION SIMULATION
 
-Phase 3 Highlights
-✅ Schema-level multi-tenant enforcement
-✅ Role-specific dashboards & UX
-✅ Decision Gateway for AI intent routing
-✅ Sectionalized + Sequentialized AI Reports
-✅ True State Machine + Saga cancellation flows
-✅ Chatbot microservice (Nest.js + Redis + PostgreSQL)
-✅ Async cross-service pipeline (ERP ↔ Chatbot ↔ Mistral)
-✅ CPU-only LLM architecture for offline demo
-✅ Refined UX with Pulse animation & overlay blocking
-✅ Ready for AWS SageMaker GPU Phase 3.1 upgrade
+## Phase 3 Highlights:
 
-Future Work / Phase 4 Preview
-Transition Mistral 7B to AWS SageMaker GPU
+- Schema-level multi-tenant enforcement
+- Role-specific dashboards & UX
+- Decision Gateway for AI intent routing
+- Sectionalized + Sequentialized AI Reports
+- True State Machine + Saga cancellation flows
+- Chatbot microservice (Nest.js + Redis + PostgreSQL)
+- Async cross-service pipeline (ERP ↔ Chatbot ↔ Mistral)
+- CPU-only LLM architecture for offline demo
+- Refined UX with Pulse animation & overlay blocking
+- Ready for AWS SageMaker GPU Phase 3.1 upgrade
 
-Parallelized Context Retriever for faster AI responses
+## Future Work / Phase 3 version 2 Preview:
 
-AI Hub Dashboard unifying reports + chat
+- Transition Mistral 7B to AWS SageMaker GPU
+- Parallelized Context Retriever for faster AI responses
+- AI Hub Dashboard unifying reports + chat
+- WebSocket-based streaming for real-time AI interactions
+- Advanced RBAC and audit analytics via GraphQL
 
-WebSocket-based streaming for real-time AI interactions
-
-Advanced RBAC and audit analytics via GraphQL
-
-Author: Devland FS24
-Repository: GitHub – SaaS-ERP-MVP-Phase3
-License: MIT
-
+---
 ## Appendix – WSL ↔ Windows Networking Guide
 
 Because the **Chatbot AI microservice** runs inside WSL (Ubuntu 22.04), while the **ERP Gateway (.NET)** and **Frontend (React)** typically run on Windows, you must bridge the network correctly.  
@@ -230,67 +213,58 @@ Windows and Linux treat `localhost` differently — WSL services are not automat
 
 ### 1 Find Your WSL IP Address
 Inside your Ubuntu WSL console, run:
-```bash
-ip addr show eth0 | grep inet
+
+  ip addr show eth0 | grep inet
+  
 You’ll see an output like:
 
-nginx
-Copiar código
-inet 172.25.16.1/20 brd 172.25.31.255 scope global eth0
+  inet 172.25.16.1/20 brd 172.25.31.255 scope global eth0
+
 The first address (172.25.16.1 in this example) is your WSL IP.
 
-2 Replace localhost with WSL IP in Configs
+## 2 Replace localhost with WSL IP in Configs
+
 Every Windows-side configuration that targets the Chatbot or AI server must use the WSL IP instead of localhost.
 
-Examples
+## Examples
 
-Component	Key	Example
+Component	Key	Example:
 .env.local (React)	VITE_CHATBOT_SERVER_URL	http://172.25.16.1:7000
 .env.local (React)	VITE_AI_SERVER_URL	http://172.25.16.1:6000
 .env (ERP Gateway)	AI_SERVER_URL	http://172.25.16.1:6000
 .env (ERP Gateway)	CHATBOT_SERVER_URL	http://172.25.16.1:7000
 
-3 Test Connectivity from Windows
+## 3 Test Connectivity from Windows
 Before running your frontend or backend, test the connection:
 
-powershell
-Copiar código
-curl http://172.25.16.1:7000/api/chat
-If it responds (even with an error message), the service is reachable.
+  curl http://172.25.16.1:7000/api/chat
 
+If it responds (even with an error message), the service is reachable.
 If it hangs or fails, check your WSL firewall and ensure the service listens on 0.0.0.0, not localhost.
 
-4 Modify Nest.js to Bind to All Interfaces
+## 4 Modify Nest.js to Bind to All Interfaces
 In main.ts of your Chatbot AI service, ensure:
 
-typescript
-Copiar código
-await app.listen(process.env.PORT || 7000, '0.0.0.0');
+  await app.listen(process.env.PORT || 7000, '0.0.0.0');
+
 This allows Windows applications to reach it via the WSL IP.
 
-5 Optional – Use Dynamic IP Resolution
+## 5 Optional – Use Dynamic IP Resolution
 WSL IPs change on reboot. To make configs resilient:
 
 Add this PowerShell script to C:\Users\<you>\wsl-refresh-ip.ps1:
 
-powershell
-Copiar código
-$ip = wsl hostname -I
+  $ip = wsl hostname -I
+
 Write-Output "Current WSL IP: $ip"
-(Get-Content .env.local) -replace '172\.\d+\.\d+\.\d+', $ip.Trim() | Set-Content .env.local
+
+  (Get-Content .env.local) -replace '172\.\d+\.\d+\.\d+', $ip.Trim() | Set-Content .env.local
+
 Run it whenever WSL restarts to auto-update .env.local.
 
-6 Optional – Reverse Proxy for Simplicity
+## 6 Optional – Reverse Proxy for Simplicity
+
 You can use Nginx on Windows or IIS Express to proxy Windows localhost:7000 → WSL 172.x.x.x:7000
 This way, you can keep using http://localhost:7000 consistently.
 
-✅ Quick Checklist
-Task	Expected Result
-ip addr show eth0	Shows WSL IP
-curl http://172.xx.xx.xx:7000/api/chat	Returns chatbot JSON
-ERP Gateway → Chatbot	Logs “Connected to AI service”
-React → Chatbot	Chat UI responds successfully
 
-Summary:
-Always expose WSL services on 0.0.0.0, use your 172.x.x.x IP in configs, and verify connectivity with curl.
-This ensures smooth Windows ↔ Linux interop for your AI Chatbot and ERP Gateway.
