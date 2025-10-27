@@ -2,6 +2,8 @@
 
 Third-phase evolution of a multi-tenant SaaS ERP built with **.NET 8** (backend), **React 18 + Vite + TypeScript** (frontend), and a new **Nest.js Chatbot AI microservice** running under **WSL (Windows Subsystem for Linux)**.  
 This phase delivers a complete AI-augmented ERP experience — combining PDF report generation, interactive chatbot assistance, and end-to-end orchestration via the ERP Gateway.
+## LOCAL MISTRAL 7B SERVER MODEL NAME: mistral-7b-instruct-v0.2.Q4_K_M
+
 
 ---
 
