@@ -1,4 +1,5 @@
 # SaaS ERP MVP – Phase 3
+Experimental integration prototype (learning/PoC). Backend is the primary focus; AI is integration-level.
 
 Third-phase evolution of a multi-tenant SaaS ERP built with **.NET 8** (backend), **React 18 + Vite + TypeScript** (frontend), and a new **Nest.js Chatbot AI microservice** running under **WSL (Windows Subsystem for Linux)**.  
 This phase delivers a complete AI-augmented ERP experience — combining PDF report generation, interactive chatbot assistance, and end-to-end orchestration via the ERP Gateway.
